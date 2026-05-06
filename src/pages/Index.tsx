@@ -192,44 +192,50 @@ function WebOnboarding() {
         {/* Компания */}
         <div>
           <label className={labelCls}>Компания</label>
-          <div className="relative mb-2">
-            <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#ABABAB]" />
-            <input
-              className="w-full bg-white border border-[#E5E5E2] rounded-xl pl-9 pr-3.5 py-2.5 text-[14px] text-[#1A1A1A] placeholder:text-[#CCCCCA] outline-none focus:border-[#1A1A1A] transition-colors"
-              placeholder="Поиск компании..."
-              value={companySearch}
-              onChange={e => setCompanySearch(e.target.value)}
-            />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {companies
-              .filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase()))
-              .map((c, i) => {
-                const idx = companies.indexOf(c);
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedCompany(idx)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
-                      selectedCompany === idx
-                        ? "border-[#1A1A1A] bg-[#F7F7F5] shadow-sm"
-                        : "border-[#E5E5E2] bg-white hover:border-[#ABABAB]"
-                    }`}
-                  >
-                    <span className="text-base leading-none">{c.emoji}</span>
-                    <div className="min-w-0">
-                      <p className={`text-[13px] font-medium truncate ${selectedCompany === idx ? "text-[#1A1A1A]" : "text-[#5A5A5A]"}`}>{c.name}</p>
-                      <p className="text-[10px] text-[#ABABAB] truncate">{c.domain}</p>
-                    </div>
-                    {selectedCompany === idx && (
-                      <div className="ml-auto shrink-0 w-4 h-4 rounded-full bg-[#1A1A1A] flex items-center justify-center">
-                        <Icon name="Check" size={9} className="text-white" />
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-          </div>
+          {selectedCompany === null ? (
+            <div className="relative">
+              <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#ABABAB]" />
+              <input
+                className="w-full bg-white border border-[#E5E5E2] rounded-xl pl-9 pr-3.5 py-2.5 text-[14px] text-[#1A1A1A] placeholder:text-[#CCCCCA] outline-none focus:border-[#1A1A1A] transition-colors"
+                placeholder="Поиск компании..."
+                value={companySearch}
+                onChange={e => setCompanySearch(e.target.value)}
+              />
+              {companySearch.length > 0 && (
+                <div className="mt-1 bg-white border border-[#E5E5E2] rounded-xl overflow-hidden shadow-sm">
+                  {companies
+                    .filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase()))
+                    .map((c, _) => {
+                      const idx = companies.indexOf(c);
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => { setSelectedCompany(idx); setCompanySearch(""); }}
+                          className="w-full flex items-center gap-3 px-3.5 py-2.5 hover:bg-[#F7F7F5] transition-colors text-left border-b border-[#F2F2F0] last:border-0"
+                        >
+                          <span className="text-base leading-none">{c.emoji}</span>
+                          <div>
+                            <p className="text-[13px] font-medium text-[#1A1A1A]">{c.name}</p>
+                            <p className="text-[11px] text-[#ABABAB]">{c.domain}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 px-3.5 py-2.5 bg-[#F7F7F5] border border-[#1A1A1A] rounded-xl">
+              <span className="text-base leading-none">{companies[selectedCompany].emoji}</span>
+              <div className="flex-1">
+                <p className="text-[13px] font-medium text-[#1A1A1A]">{companies[selectedCompany].name}</p>
+                <p className="text-[11px] text-[#ABABAB]">{companies[selectedCompany].domain}</p>
+              </div>
+              <button onClick={() => setSelectedCompany(null)} className="text-[#ABABAB] hover:text-[#1A1A1A] transition-colors">
+                <Icon name="X" size={14} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Статус */}
