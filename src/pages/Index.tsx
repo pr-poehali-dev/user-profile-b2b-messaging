@@ -18,6 +18,15 @@ const chats = [
   { name: "Tech leads", members: "9 участников", emoji: "⚙️" },
 ];
 
+const companies = [
+  { name: "Яндекс", domain: "yandex.ru", emoji: "🟡" },
+  { name: "Сбер", domain: "sber.ru", emoji: "🟢" },
+  { name: "VK", domain: "vk.com", emoji: "🔵" },
+  { name: "Авито", domain: "avito.ru", emoji: "🟠" },
+  { name: "Тинькофф", domain: "tinkoff.ru", emoji: "⚫" },
+  { name: "Ozon", domain: "ozon.ru", emoji: "🔵" },
+];
+
 const statuses = [
   { emoji: "🟢", label: "Доступен" },
   { emoji: "🌴", label: "В отпуске" },
@@ -114,8 +123,8 @@ function WebOnboarding() {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [role, setRole] = useState("");
-  const [company, setCompany] = useState("");
-  const [city, setCity] = useState("");
+  const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
+  const [companySearch, setCompanySearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(0);
 
   const inputCls = "w-full bg-white border border-[#E5E5E2] rounded-xl px-3.5 py-2.5 text-[14px] text-[#1A1A1A] placeholder:text-[#CCCCCA] outline-none focus:border-[#1A1A1A] transition-colors";
@@ -180,15 +189,46 @@ function WebOnboarding() {
           </div>
         </div>
 
-        {/* Компания + город */}
-        <div className="flex gap-2.5">
-          <div className="flex-1">
-            <label className={labelCls}>Компания</label>
-            <input className={inputCls} placeholder="Яндекс" value={company} onChange={e => setCompany(e.target.value)} />
+        {/* Компания */}
+        <div>
+          <label className={labelCls}>Компания</label>
+          <div className="relative mb-2">
+            <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#ABABAB]" />
+            <input
+              className="w-full bg-white border border-[#E5E5E2] rounded-xl pl-9 pr-3.5 py-2.5 text-[14px] text-[#1A1A1A] placeholder:text-[#CCCCCA] outline-none focus:border-[#1A1A1A] transition-colors"
+              placeholder="Поиск компании..."
+              value={companySearch}
+              onChange={e => setCompanySearch(e.target.value)}
+            />
           </div>
-          <div className="flex-1">
-            <label className={labelCls}>Город</label>
-            <input className={inputCls} placeholder="Москва" value={city} onChange={e => setCity(e.target.value)} />
+          <div className="grid grid-cols-3 gap-2">
+            {companies
+              .filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase()))
+              .map((c, i) => {
+                const idx = companies.indexOf(c);
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedCompany(idx)}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
+                      selectedCompany === idx
+                        ? "border-[#1A1A1A] bg-[#F7F7F5] shadow-sm"
+                        : "border-[#E5E5E2] bg-white hover:border-[#ABABAB]"
+                    }`}
+                  >
+                    <span className="text-base leading-none">{c.emoji}</span>
+                    <div className="min-w-0">
+                      <p className={`text-[13px] font-medium truncate ${selectedCompany === idx ? "text-[#1A1A1A]" : "text-[#5A5A5A]"}`}>{c.name}</p>
+                      <p className="text-[10px] text-[#ABABAB] truncate">{c.domain}</p>
+                    </div>
+                    {selectedCompany === idx && (
+                      <div className="ml-auto shrink-0 w-4 h-4 rounded-full bg-[#1A1A1A] flex items-center justify-center">
+                        <Icon name="Check" size={9} className="text-white" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
           </div>
         </div>
 
