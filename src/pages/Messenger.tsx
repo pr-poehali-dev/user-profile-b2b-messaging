@@ -9,9 +9,8 @@ type ChatType = "colleague" | "external" | "group" | "client" | "vendor";
 interface Chat {
   id: number;
   name: string;
-  avatar?: string;
-  initials?: string;
-  color?: string;
+  initials: string;
+  avatarBg: string;
   lastMessage: string;
   time: string;
   unread?: number;
@@ -21,16 +20,24 @@ interface Chat {
   muted?: boolean;
   pinned?: boolean;
   role?: string;
+  online?: boolean;
 }
 
+const TYPE_META: Record<ChatType, { label: string; color: string; lightBg: string; textColor: string }> = {
+  colleague: { label: "Коллега",     color: "#3B82F6", lightBg: "#EFF6FF", textColor: "#2563EB" },
+  client:    { label: "Заказчик",    color: "#F59E0B", lightBg: "#FFFBEB", textColor: "#D97706" },
+  vendor:    { label: "Подрядчик",   color: "#8B5CF6", lightBg: "#F5F3FF", textColor: "#7C3AED" },
+  external:  { label: "Партнёр",     color: "#10B981", lightBg: "#ECFDF5", textColor: "#059669" },
+  group:     { label: "Группа",      color: "#6B7280", lightBg: "#F3F4F6", textColor: "#4B5563" },
+};
+
 const ALL_CHATS: Chat[] = [
-  // Закреплённые
   {
     id: 1,
     name: "Дизайн & продукт",
     initials: "ДП",
-    color: "#E8F0FF",
-    lastMessage: "Маша: Обновила макеты в Figma, смотрите",
+    avatarBg: "#E8F0FF",
+    lastMessage: "Маша: Обновила макеты в Figma, смотрите 👀",
     time: "10:42",
     unread: 3,
     type: "group",
@@ -39,85 +46,45 @@ const ALL_CHATS: Chat[] = [
   {
     id: 2,
     name: "Стратегия 2026",
-    initials: "26",
-    color: "#F0F9EB",
+    initials: "С2",
+    avatarBg: "#F0F9EB",
     lastMessage: "Вы: Ок, встречаемся в среду",
     time: "09:15",
     type: "group",
     pinned: true,
   },
-
-  // Коллеги
   {
     id: 3,
     name: "Кирилл Новиков",
     initials: "КН",
-    color: "#FFF0F0",
-    lastMessage: "Кинул тебе PR на ревью",
+    avatarBg: "#FEE2E2",
+    lastMessage: "Кинул тебе PR на ревью, посмотри когда будет время",
     time: "Вчера",
     unread: 1,
     type: "colleague",
     company: "Яндекс",
     companyEmoji: "🟡",
     role: "Senior Dev",
+    online: true,
   },
   {
     id: 4,
     name: "Маша Орлова",
     initials: "МО",
-    color: "#FFF8E6",
+    avatarBg: "#FEF3C7",
     lastMessage: "Спасибо, буду на онлайне!",
     time: "Вчера",
     type: "colleague",
     company: "Яндекс",
     companyEmoji: "🟡",
     role: "UX Designer",
+    online: true,
   },
   {
     id: 5,
-    name: "Дима Фролов",
-    initials: "ДФ",
-    color: "#F0F0FF",
-    lastMessage: "Вы: Встреча в 14:00, не забудь",
-    time: "Пн",
-    type: "colleague",
-    company: "Яндекс",
-    companyEmoji: "🟡",
-    role: "Аналитик",
-    muted: true,
-  },
-
-  // Внешние
-  {
-    id: 6,
-    name: "Антон Белов",
-    initials: "АБ",
-    color: "#E8F5F0",
-    lastMessage: "Скинул счёт на почту",
-    time: "Пн",
-    unread: 2,
-    type: "vendor",
-    company: "Студия «Форма»",
-    companyEmoji: "🎨",
-    role: "Дизайнер",
-  },
-  {
-    id: 7,
-    name: "Елена Кравцова",
-    initials: "ЕК",
-    color: "#FFF0FA",
-    lastMessage: "Договор подписан, жду оплату",
-    time: "Вс",
-    type: "vendor",
-    company: "LegalPro",
-    companyEmoji: "⚖️",
-    role: "Юрист",
-  },
-  {
-    id: 8,
     name: "Максим Горин",
     initials: "МГ",
-    color: "#F5F0FF",
+    avatarBg: "#FEF3C7",
     lastMessage: "Вы: Покажем презентацию во вторник",
     time: "Вс",
     type: "client",
@@ -126,11 +93,11 @@ const ALL_CHATS: Chat[] = [
     role: "Заказчик",
   },
   {
-    id: 9,
+    id: 6,
     name: "Ольга Трофимова",
     initials: "ОТ",
-    color: "#FFF5EE",
-    lastMessage: "Когда будет демо?",
+    avatarBg: "#FFEDD5",
+    lastMessage: "Когда будет демо? Нужно согласовать с командой",
     time: "Пт",
     unread: 4,
     type: "client",
@@ -139,24 +106,61 @@ const ALL_CHATS: Chat[] = [
     role: "Заказчик",
   },
   {
-    id: 10,
+    id: 7,
+    name: "Антон Белов",
+    initials: "АБ",
+    avatarBg: "#EDE9FE",
+    lastMessage: "Скинул счёт на почту, проверьте",
+    time: "Пн",
+    unread: 2,
+    type: "vendor",
+    company: "Студия «Форма»",
+    companyEmoji: "🎨",
+    role: "Дизайнер",
+  },
+  {
+    id: 8,
+    name: "Елена Кравцова",
+    initials: "ЕК",
+    avatarBg: "#F3E8FF",
+    lastMessage: "Договор подписан, жду оплату",
+    time: "Вс",
+    type: "vendor",
+    company: "LegalPro",
+    companyEmoji: "⚖️",
+    role: "Юрист",
+  },
+  {
+    id: 9,
     name: "Игорь Власов",
     initials: "ИВ",
-    color: "#EEFAF5",
-    lastMessage: "Привет! Есть минута?",
+    avatarBg: "#D1FAE5",
+    lastMessage: "Привет! Есть минута обсудить партнёрство?",
     time: "Пт",
     type: "external",
     company: "VK",
     companyEmoji: "🔵",
     role: "Партнёр",
+    online: true,
   },
-
-  // Групповые
+  {
+    id: 10,
+    name: "Дима Фролов",
+    initials: "ДФ",
+    avatarBg: "#E0E7FF",
+    lastMessage: "Вы: Встреча в 14:00, не забудь",
+    time: "Пн",
+    type: "colleague",
+    company: "Яндекс",
+    companyEmoji: "🟡",
+    role: "Аналитик",
+    muted: true,
+  },
   {
     id: 11,
     name: "Tech leads",
     initials: "TL",
-    color: "#EEF0F5",
+    avatarBg: "#F1F5F9",
     lastMessage: "Паша: В пятницу ретро, не забудьте",
     time: "Пт",
     type: "group",
@@ -166,28 +170,20 @@ const ALL_CHATS: Chat[] = [
     id: 12,
     name: "Проект «Атлас»",
     initials: "АТ",
-    color: "#FFF3E0",
-    lastMessage: "Вы: Финальная версия готова",
+    avatarBg: "#FFF7ED",
+    lastMessage: "Вы: Финальная версия готова 🎉",
     time: "Чт",
     type: "group",
   },
 ];
 
 const FOLDERS = [
-  { id: "all", label: "Все", icon: "MessageSquare" },
-  { id: "colleagues", label: "Коллеги", icon: "Users" },
-  { id: "clients", label: "Заказчики", icon: "Briefcase" },
-  { id: "vendors", label: "Подрядчики", icon: "Wrench" },
-  { id: "groups", label: "Группы", icon: "LayoutGrid" },
+  { id: "all",        label: "Все",          icon: "Layers" },
+  { id: "colleagues", label: "Коллеги",      icon: "Users" },
+  { id: "clients",    label: "Заказчики",    icon: "Briefcase" },
+  { id: "vendors",    label: "Подрядчики",   icon: "Wrench" },
+  { id: "groups",     label: "Группы",       icon: "MessagesSquare" },
 ];
-
-const TYPE_BADGE: Record<ChatType, { label: string; bg: string; text: string }> = {
-  colleague: { label: "Коллега", bg: "bg-blue-50", text: "text-blue-600" },
-  client: { label: "Заказчик", bg: "bg-amber-50", text: "text-amber-600" },
-  vendor: { label: "Подрядчик", bg: "bg-purple-50", text: "text-purple-600" },
-  external: { label: "Партнёр", bg: "bg-green-50", text: "text-green-600" },
-  group: { label: "Группа", bg: "bg-gray-100", text: "text-gray-500" },
-};
 
 const MESSAGES = [
   { id: 1, from: "them", text: "Привет! Есть время обсудить дизайн онбординга?", time: "10:30" },
@@ -198,18 +194,78 @@ const MESSAGES = [
   { id: 6, from: "them", text: "Обновила макеты в Figma, смотрите 👀", time: "10:42" },
 ];
 
-function Avatar({ chat, size = "md" }: { chat: Chat; size?: "sm" | "md" | "lg" }) {
-  const sz = size === "sm" ? "w-8 h-8 text-[11px]" : size === "lg" ? "w-11 h-11 text-[15px]" : "w-10 h-10 text-[13px]";
+function Avatar({ chat, size = 10 }: { chat: Chat; size?: number }) {
+  const px = `${size * 4}px`;
+  const font = `${Math.round(size * 1.3)}px`;
   return (
     <div
-      className={`${sz} rounded-full flex items-center justify-center font-semibold text-[#5A5A5A] shrink-0 relative`}
-      style={{ backgroundColor: chat.color }}
+      className="rounded-full flex items-center justify-center font-semibold text-[#4B5563] shrink-0 relative"
+      style={{ width: px, height: px, backgroundColor: chat.avatarBg, fontSize: font }}
     >
       {chat.initials}
-      {chat.companyEmoji && (
-        <span className="absolute -bottom-0.5 -right-0.5 text-[10px] leading-none">{chat.companyEmoji}</span>
+      {chat.online && (
+        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-white" />
       )}
     </div>
+  );
+}
+
+function ChatRow({ chat, active, onClick }: { chat: Chat; active: boolean; onClick: () => void }) {
+  const meta = TYPE_META[chat.type];
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-start gap-3.5 px-4 py-3.5 transition-colors text-left relative border-b border-[#F5F5F3] ${
+        active ? "bg-[#F7F7F5]" : "hover:bg-[#FAFAF8] bg-white"
+      }`}
+    >
+      {/* Type accent bar */}
+      <div
+        className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full"
+        style={{ backgroundColor: active ? meta.color : "transparent" }}
+      />
+
+      <Avatar chat={chat} size={11} />
+
+      <div className="flex-1 min-w-0">
+        {/* Row 1: name + time */}
+        <div className="flex items-center justify-between gap-2 mb-0.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`text-[14px] truncate ${chat.unread ? "font-semibold text-[#1A1A1A]" : "font-medium text-[#1A1A1A]"}`}>
+              {chat.name}
+            </span>
+            {chat.pinned && <Icon name="Pin" size={11} className="text-[#CCCCCA] shrink-0" />}
+            {chat.muted && <Icon name="BellOff" size={11} className="text-[#CCCCCA] shrink-0" />}
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {chat.unread ? (
+              <span className="text-[11px] font-semibold bg-[#1A1A1A] text-white rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1.5">
+                {chat.unread}
+              </span>
+            ) : null}
+            <span className="text-[12px] text-[#ABABAB]">{chat.time}</span>
+          </div>
+        </div>
+
+        {/* Row 2: role badge + company */}
+        <div className="flex items-center gap-1.5 mb-1">
+          <span
+            className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
+            style={{ backgroundColor: meta.lightBg, color: meta.textColor }}
+          >
+            {meta.label}
+          </span>
+          {chat.company && (
+            <span className="text-[11px] text-[#ABABAB] truncate">
+              {chat.companyEmoji} {chat.company}
+            </span>
+          )}
+        </div>
+
+        {/* Row 3: last message */}
+        <p className="text-[12px] text-[#8B8B8B] truncate leading-relaxed">{chat.lastMessage}</p>
+      </div>
+    </button>
   );
 }
 
@@ -232,22 +288,22 @@ export default function Messenger() {
 
   const pinned = filtered.filter(c => c.pinned);
   const rest = filtered.filter(c => !c.pinned);
-
-  const badge = TYPE_BADGE[activeChat.type];
+  const badge = TYPE_META[activeChat.type];
 
   return (
     <div className="h-screen bg-[#F2F2F0] flex overflow-hidden font-golos">
 
       {/* Sidebar nav */}
-      <div className="w-16 bg-[#1A1A1A] flex flex-col items-center py-5 gap-1 shrink-0">
-        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center mb-4">
-          <span className="text-white text-[14px] font-bold">М</span>
+      <div className="w-[60px] bg-[#111111] flex flex-col items-center py-5 gap-1 shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center mb-5">
+          <span className="text-white text-[13px] font-bold">М</span>
         </div>
         {[
           { icon: "MessageSquare", active: true },
           { icon: "Users", active: false },
           { icon: "Phone", active: false },
           { icon: "Bell", active: false },
+          { icon: "Settings", active: false },
         ].map((item, i) => (
           <button
             key={i}
@@ -255,33 +311,38 @@ export default function Messenger() {
               item.active ? "bg-white/15" : "hover:bg-white/8"
             }`}
           >
-            <Icon name={item.icon} size={18} className={item.active ? "text-white" : "text-white/40"} />
+            <Icon name={item.icon} size={18} className={item.active ? "text-white" : "text-white/35"} />
           </button>
         ))}
         <div className="mt-auto">
           <div className="relative">
             <img src={AVATAR_URL} alt="me" className="w-9 h-9 rounded-full object-cover ring-2 ring-white/20" />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#1A1A1A]" />
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#111]" />
           </div>
         </div>
       </div>
 
-      {/* Chat list panel */}
-      <div className="w-72 bg-white border-r border-[#EDEDEB] flex flex-col shrink-0">
+      {/* Chat list — wide */}
+      <div className="w-[400px] flex flex-col shrink-0 bg-white border-r border-[#EDEDEB]">
+
         {/* Header */}
-        <div className="px-4 pt-5 pb-3">
+        <div className="px-5 pt-5 pb-4 border-b border-[#F2F2F0]">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-[17px] font-semibold text-[#1A1A1A]">Сообщения</h1>
-            <button className="w-7 h-7 rounded-lg bg-[#F5F5F3] flex items-center justify-center hover:bg-[#EDEDEB] transition-colors">
-              <Icon name="Plus" size={15} className="text-[#5A5A5A]" />
-            </button>
+            <h1 className="text-[18px] font-semibold text-[#1A1A1A]">Сообщения</h1>
+            <div className="flex gap-1">
+              <button className="w-8 h-8 rounded-lg bg-[#F5F5F3] flex items-center justify-center hover:bg-[#EDEDEB] transition-colors">
+                <Icon name="Filter" size={14} className="text-[#5A5A5A]" />
+              </button>
+              <button className="w-8 h-8 rounded-lg bg-[#1A1A1A] flex items-center justify-center hover:bg-[#333] transition-colors">
+                <Icon name="Plus" size={14} className="text-white" />
+              </button>
+            </div>
           </div>
-          {/* Search */}
           <div className="relative">
-            <Icon name="Search" size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#ABABAB]" />
+            <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#ABABAB]" />
             <input
-              className="w-full bg-[#F5F5F3] rounded-xl pl-8 pr-3 py-2 text-[13px] text-[#1A1A1A] placeholder:text-[#ABABAB] outline-none"
-              placeholder="Поиск..."
+              className="w-full bg-[#F5F5F3] rounded-xl pl-9 pr-4 py-2.5 text-[14px] text-[#1A1A1A] placeholder:text-[#ABABAB] outline-none"
+              placeholder="Поиск по чатам..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -289,12 +350,12 @@ export default function Messenger() {
         </div>
 
         {/* Folders */}
-        <div className="flex gap-1 px-3 pb-3 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+        <div className="flex gap-1.5 px-5 py-3 border-b border-[#F2F2F0]">
           {FOLDERS.map(f => (
             <button
               key={f.id}
               onClick={() => setActiveFolder(f.id)}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[12px] font-medium whitespace-nowrap transition-all shrink-0 ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium whitespace-nowrap transition-all ${
                 activeFolder === f.id
                   ? "bg-[#1A1A1A] text-white"
                   : "text-[#8B8B8B] hover:bg-[#F5F5F3]"
@@ -306,18 +367,19 @@ export default function Messenger() {
           ))}
         </div>
 
-        {/* Chat list */}
+        {/* List */}
         <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
           {pinned.length > 0 && (
             <>
-              <div className="px-4 py-1.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#CCCCCA]">Закреплённые</span>
+              <div className="px-5 pt-4 pb-1 flex items-center gap-2">
+                <Icon name="Pin" size={11} className="text-[#CCCCCA]" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#CCCCCA]">Закреплённые</span>
               </div>
               {pinned.map(chat => (
                 <ChatRow key={chat.id} chat={chat} active={activeChat.id === chat.id} onClick={() => setActiveChat(chat)} />
               ))}
-              <div className="px-4 py-1.5 mt-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#CCCCCA]">Остальные</span>
+              <div className="px-5 pt-4 pb-1">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#CCCCCA]">Все чаты</span>
               </div>
             </>
           )}
@@ -325,54 +387,59 @@ export default function Messenger() {
             <ChatRow key={chat.id} chat={chat} active={activeChat.id === chat.id} onClick={() => setActiveChat(chat)} />
           ))}
         </div>
+
+        {/* Legend */}
+        <div className="px-5 py-3 border-t border-[#F2F2F0] flex flex-wrap gap-x-4 gap-y-1.5">
+          {Object.entries(TYPE_META).map(([, m]) => (
+            <div key={m.label} className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
+              <span className="text-[11px] text-[#8B8B8B]">{m.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Chat area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Chat header */}
         <div className="h-14 bg-white border-b border-[#EDEDEB] flex items-center px-5 gap-3 shrink-0">
-          <Avatar chat={activeChat} size="sm" />
+          <Avatar chat={activeChat} size={9} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="text-[14px] font-semibold text-[#1A1A1A] truncate">{activeChat.name}</span>
-              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+              <span
+                className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                style={{ backgroundColor: badge.lightBg, color: badge.textColor }}
+              >
                 {badge.label}
               </span>
             </div>
             {activeChat.company && (
-              <p className="text-[11px] text-[#ABABAB] truncate">{activeChat.companyEmoji} {activeChat.company} · {activeChat.role}</p>
+              <p className="text-[11px] text-[#ABABAB]">{activeChat.companyEmoji} {activeChat.company} · {activeChat.role}</p>
             )}
           </div>
           <div className="flex items-center gap-1">
-            <button className="w-8 h-8 rounded-lg hover:bg-[#F5F5F3] flex items-center justify-center transition-colors">
-              <Icon name="Phone" size={16} className="text-[#8B8B8B]" />
-            </button>
-            <button className="w-8 h-8 rounded-lg hover:bg-[#F5F5F3] flex items-center justify-center transition-colors">
-              <Icon name="Video" size={16} className="text-[#8B8B8B]" />
-            </button>
-            <button className="w-8 h-8 rounded-lg hover:bg-[#F5F5F3] flex items-center justify-center transition-colors">
-              <Icon name="Info" size={16} className="text-[#8B8B8B]" />
-            </button>
+            {["Phone", "Video", "Info"].map(ic => (
+              <button key={ic} className="w-8 h-8 rounded-lg hover:bg-[#F5F5F3] flex items-center justify-center transition-colors">
+                <Icon name={ic} size={16} className="text-[#8B8B8B]" />
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-3" style={{ scrollbarWidth: "none" }}>
+        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-3 bg-[#F9F9F7]" style={{ scrollbarWidth: "none" }}>
           <div className="flex justify-center mb-2">
             <span className="text-[11px] text-[#ABABAB] bg-white px-3 py-1 rounded-full border border-[#EDEDEB]">Сегодня</span>
           </div>
           {MESSAGES.map(msg => (
             <div key={msg.id} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
-              {msg.from === "them" && (
-                <Avatar chat={activeChat} size="sm" />
-              )}
-              <div className={`max-w-[65%] px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed ml-2 mr-2 ${
+              {msg.from === "them" && <Avatar chat={activeChat} size={8} />}
+              <div className={`max-w-[65%] px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed ml-2 mr-2 ${
                 msg.from === "me"
                   ? "bg-[#1A1A1A] text-white rounded-br-sm"
                   : "bg-white text-[#1A1A1A] rounded-bl-sm border border-[#EDEDEB]"
               }`}>
                 {msg.text}
-                <div className={`text-[10px] mt-1 ${msg.from === "me" ? "text-white/50 text-right" : "text-[#ABABAB]"}`}>
+                <div className={`text-[10px] mt-1 ${msg.from === "me" ? "text-white/40 text-right" : "text-[#CCCCCA]"}`}>
                   {msg.time}
                 </div>
               </div>
@@ -380,7 +447,6 @@ export default function Messenger() {
           ))}
         </div>
 
-        {/* Input */}
         <div className="bg-white border-t border-[#EDEDEB] px-5 py-3 flex items-center gap-3">
           <button className="w-8 h-8 rounded-lg hover:bg-[#F5F5F3] flex items-center justify-center transition-colors shrink-0">
             <Icon name="Paperclip" size={16} className="text-[#ABABAB]" />
@@ -391,86 +457,11 @@ export default function Messenger() {
             value={message}
             onChange={e => setMessage(e.target.value)}
           />
-          <button className="w-8 h-8 rounded-lg hover:bg-[#F5F5F3] flex items-center justify-center transition-colors shrink-0">
-            <Icon name="Smile" size={16} className="text-[#ABABAB]" />
-          </button>
-          <button
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0 ${
-              message.trim() ? "bg-[#1A1A1A] hover:bg-[#333]" : "bg-[#EDEDEB]"
-            }`}
-          >
+          <button className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0 ${message.trim() ? "bg-[#1A1A1A]" : "bg-[#EDEDEB]"}`}>
             <Icon name="Send" size={15} className={message.trim() ? "text-white" : "text-[#ABABAB]"} />
           </button>
         </div>
       </div>
-
-      {/* Right panel — profile info */}
-      <div className="w-64 bg-white border-l border-[#EDEDEB] flex flex-col shrink-0">
-        <div className="flex flex-col items-center pt-8 pb-5 px-5 border-b border-[#EDEDEB]">
-          <Avatar chat={activeChat} size="lg" />
-          <h2 className="text-[14px] font-semibold text-[#1A1A1A] mt-3 text-center">{activeChat.name}</h2>
-          {activeChat.role && (
-            <p className="text-[12px] text-[#8B8B8B] mt-0.5">{activeChat.role}</p>
-          )}
-          {activeChat.company && (
-            <span className="mt-2 text-[11px] text-[#5A5A5A] bg-[#F5F5F3] px-2.5 py-1 rounded-lg">
-              {activeChat.companyEmoji} {activeChat.company}
-            </span>
-          )}
-          <span className={`mt-2 text-[11px] font-medium px-2.5 py-1 rounded-full ${badge.bg} ${badge.text}`}>
-            {badge.label}
-          </span>
-        </div>
-        <div className="px-4 py-4 flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[#CCCCCA] mb-1">Действия</p>
-          {[
-            { icon: "UserRound", label: "Открыть профиль" },
-            { icon: "BellOff", label: "Отключить уведомления" },
-            { icon: "Pin", label: "Закрепить чат" },
-            { icon: "Trash2", label: "Удалить чат" },
-          ].map((a, i) => (
-            <button
-              key={i}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] hover:bg-[#F5F5F3] transition-colors text-left w-full ${
-                a.label === "Удалить чат" ? "text-red-500" : "text-[#5A5A5A]"
-              }`}
-            >
-              <Icon name={a.icon} size={15} className={a.label === "Удалить чат" ? "text-red-400" : "text-[#ABABAB]"} />
-              {a.label}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
-  );
-}
-
-function ChatRow({ chat, active, onClick }: { chat: Chat; active: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-left ${
-        active ? "bg-[#F5F5F3]" : "hover:bg-[#FAFAF8]"
-      }`}
-    >
-      <Avatar chat={chat} />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-1 mb-0.5">
-          <span className="text-[13px] font-medium text-[#1A1A1A] truncate">{chat.name}</span>
-          <span className="text-[11px] text-[#ABABAB] shrink-0">{chat.time}</span>
-        </div>
-        <div className="flex items-center justify-between gap-1">
-          <p className="text-[12px] text-[#8B8B8B] truncate flex items-center gap-1">
-            {chat.muted && <Icon name="BellOff" size={11} className="text-[#CCCCCA] shrink-0" />}
-            {chat.lastMessage}
-          </p>
-          {chat.unread && (
-            <span className="text-[10px] font-semibold bg-[#1A1A1A] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shrink-0">
-              {chat.unread}
-            </span>
-          )}
-        </div>
-      </div>
-    </button>
   );
 }
