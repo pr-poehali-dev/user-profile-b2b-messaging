@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import PhoneShell from "@/components/PhoneShell";
+import MessengerMobile from "@/components/MessengerMobile";
 
 const AVATAR_URL =
   "https://cdn.poehali.dev/projects/26dd1934-cbc7-4b73-84ae-c57f8c4bcf36/files/ac5ca109-7ac6-4ba9-b58c-d31d2e4c4eb8.jpg";
@@ -277,21 +278,35 @@ function WebOnboarding() {
 export default function Index() {
   return (
     <div className="min-h-screen bg-[#DDDBD4] font-golos flex items-center justify-center py-12 px-8">
-      <div className="flex items-center gap-12">
+      <div className="flex items-center gap-16">
 
-        {/* Левая часть — веб-форма */}
+        {/* Мессенджер — телефон */}
+        <div className="flex flex-col items-center gap-4">
+          <span className="text-[12px] font-medium text-[#8B8B8B] tracking-wide uppercase">Мессенджер</span>
+          <PhoneShell>
+            <MessengerMobile />
+          </PhoneShell>
+        </div>
+
+        {/* Стрелка */}
+        <div className="flex items-center gap-2 mt-6">
+          <div className="w-10 h-px bg-[#ABABAB]" />
+          <Icon name="ArrowRight" size={18} className="text-[#ABABAB]" />
+        </div>
+
+        {/* Регистрация — форма */}
         <div className="flex flex-col items-center gap-4">
           <span className="text-[12px] font-medium text-[#8B8B8B] tracking-wide uppercase">Регистрация</span>
           <WebOnboarding />
         </div>
 
         {/* Стрелка */}
-        <div className="flex items-center gap-2 text-[#ABABAB] mt-6">
+        <div className="flex items-center gap-2 mt-6">
           <div className="w-10 h-px bg-[#ABABAB]" />
           <Icon name="ArrowRight" size={18} className="text-[#ABABAB]" />
         </div>
 
-        {/* Правая часть — телефон с профилем */}
+        {/* Профиль — телефон */}
         <div className="flex flex-col items-center gap-4">
           <span className="text-[12px] font-medium text-[#8B8B8B] tracking-wide uppercase">Профиль</span>
           <PhoneShell>
