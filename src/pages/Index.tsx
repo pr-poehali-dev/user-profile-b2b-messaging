@@ -3,27 +3,6 @@ import Icon from "@/components/ui/icon";
 const AVATAR_URL =
   "https://cdn.poehali.dev/projects/26dd1934-cbc7-4b73-84ae-c57f8c4bcf36/files/ac5ca109-7ac6-4ba9-b58c-d31d2e4c4eb8.jpg";
 
-const experience = [
-  {
-    company: "Яндекс",
-    role: "Старший менеджер продукта",
-    period: "2021 — сейчас",
-    logo: "🟡",
-  },
-  {
-    company: "Сбер",
-    role: "Менеджер продукта",
-    period: "2018 — 2021",
-    logo: "🟢",
-  },
-  {
-    company: "Mail.ru Group",
-    role: "Аналитик",
-    period: "2016 — 2018",
-    logo: "🔵",
-  },
-];
-
 const contacts = [
   { icon: "Mail", label: "alexei@company.ru" },
   { icon: "Phone", label: "+7 999 123-45-67" },
@@ -94,9 +73,14 @@ export default function Index() {
                 <h1 className="text-[20px] font-semibold text-[#1A1A1A] tracking-tight mb-1">
                   Алексей Соколов
                 </h1>
-                <p className="text-[14px] text-[#5A5A5A] mb-2">
+                <p className="text-[14px] text-[#5A5A5A] mb-3">
                   Старший менеджер продукта
                 </p>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="flex items-center gap-1.5 bg-[#FFF3CD] text-[#9A6C00] text-[12px] font-medium px-3 py-1 rounded-full">
+                    🌴 В отпуске до 20 мая
+                  </span>
+                </div>
                 <div className="flex items-center gap-1.5 text-[12px] text-[#ABABAB]">
                   <Icon name="MapPin" size={12} />
                   Москва, Россия
@@ -131,27 +115,6 @@ export default function Index() {
                     </div>
                     <span className="text-[11px] text-[#ABABAB] shrink-0">2021 — сейчас</span>
                   </div>
-                </div>
-              </section>
-
-              {/* Опыт */}
-              <section className="mb-6">
-                <h2 className="text-[10px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-2.5">
-                  Опыт работы
-                </h2>
-                <div className="bg-white rounded-2xl border border-[#EDEDEB] divide-y divide-[#F2F2F0]">
-                  {experience.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 px-3.5 py-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#F5F5F3] flex items-center justify-center text-sm">
-                        {item.logo}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-medium text-[#1A1A1A] leading-tight">{item.company}</p>
-                        <p className="text-[11px] text-[#8B8B8B]">{item.role}</p>
-                      </div>
-                      <span className="text-[10px] text-[#C0C0BE] shrink-0">{item.period}</span>
-                    </div>
-                  ))}
                 </div>
               </section>
 
